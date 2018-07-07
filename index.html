@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <base target="_top">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <!--<script type="text/javascript" src="google-mock.js"></script>-->
+    <style>
+        #main-form {
+            margin: 50px 0;
+        }
+
+        #result {
+            margin-top: 20px;
+        }
+
+        input,
+        select {
+            margin-bottom: 10px;
+        }
+
+        label {
+            font-weight: 500;
+        }
+
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Spreadsheet: {{name}}</h1>
+        <div id="main-form">
+            <div class="row">
+                <form class="form col-sm-12">
+                    <label>Select a column to search at:</label>
+                    <select id="field_name" class="form-control">
+                        <option value="any">Any field</option>
+                    </select>
+                    <label>Enter keyword:</label>
+                    <input id="keyword" class="form-control" placeholder="Enter keyword..." />
+                    <label>Filter by Campus:</label>
+                    <select id="filter_campus" class="form-control">
+                        <option value="no">No filtering</option>
+                    </select>
+                    <button type="submit" class="btn btn-primary" onclick="search();return false;">Search</button>
+                </form>
+            </div>
+        </div>
+        <div class="row">
+            <div id="result" class="table-responsive"></div>
+        </div>
+    </div>
+</body>
+
+<script>
+    $(() => {
+        //init after jQuery loaded
+        init();
+    });
+
+    function init() {
+        //request settings
+        google.script.run.withSuccessHandler(settings => {
+            //create HTML string from headers
+            window['headers'] = `<tr>
+                                ${settings.headers.reduce((html, header) =>
+                                    html+`<th>${header}</th>`
+                                ,'')}
+                                </tr>`;
+
+            //fill in the campus select box
+            settings.campuses.forEach(campus => {
+                $('#filter_campus').append(`<option value="${campus}">${campus}</option>`);
+            });
+
+            //fill in the fields select box
+            for (let value in settings.fieldmap) {
+                $('#field_name').append(`<option value="${value}">${settings.fieldmap[value].name}</option>`);
+            }
+        }).getSettings("{{id}}");
+    }
+
+    function search() {
+        //get data from the form
+        const keyword = $('#keyword').val().toString().toLowerCase().trim();
+        const field = $('#field_name').val();
+        const campus = $('#filter_campus').val();
+
+        //nothing to search for
+        if (keyword == '') return;
+
+        $('#result').empty();
+
+        //search inside the spreadsheet
+        google.script.run.withSuccessHandler(result => {
+            if (result.success) {
+                //create a result table
+                //add headers
+                //create a table row <tr> for each returned row
+                //create a table cell <td> for each cell in a row
+                $('#result').append(`<table class="table table-bordered">
+                                        ${window['headers']}
+                                        ${result.data.reduce((html,row) =>
+                                            html + '<tr>'+row.reduce((rowHtml, cell) =>
+                                                                        rowHtml+`<td>${cell}</td>`,'')
+                                                    +'</tr>','')}
+                                    </table>`);
+            }
+            //nothing found
+            else $('#result').append(`<div><h4>This keyword was not found in "${$("#field_name>option:selected").text()}" column :(</h4></div>`);
+        }).findRow({
+            field,
+            keyword,
+            campus,
+            id: "{{id}}"
+        });
+    }
+
+</script>
+
+</html>
