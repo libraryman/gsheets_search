@@ -88,10 +88,19 @@ function getUserInputProject () {
 };
 //search the array
 
-function searchItems(query) {
+/*function searchItems(query) {
   return TextbookDataList.filter(function(el) {
       return el.toLowerCase().indexOf(query.toLowerCase()) > -1;
   })
 }
 
-console.log(searchItems(userInput));
+console.log(searchItems(getUserInputProject));
+*/
+
+function isBookOne(name) { 
+    return name.title === 'Book One';
+}
+
+console.log(TextbookDataList.find(isBookOne));
+
+
