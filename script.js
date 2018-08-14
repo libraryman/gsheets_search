@@ -1,106 +1,72 @@
 console.log('our JS file loaded!');
-let TextbookDataList = [
-  {
-    title: "Book One",
-    author: "author One",
-    class:"Class One",
-    professor:"Professor One"
-  },
-  {
-    title: "Book Two",
-    author: "author Two",
-    class:"Class Two",
-    professor:"Professor Two"
-  },
-  {
-    title: "Book Three",
-    author: "author Three",
-    class:"Class Three",
-    professor:"Professor Three"
-  },
-  {
-    title: "Book Four",
-    author: "author Four",
-    class:"Class Four",
-    professor:"Professor Four"
-  },
-  {
-    title: "Book Five",
-    author: "author Five",
-    class:"Class Five",
-    professor:"Professor Five"
-  },
-  {
-    title: "Book Six",
-    author: "author Six",
-    class:"Class Six",
-    professor:"Professor Six"
-  },
-  {
-    title: "Book Seven",
-    author: "author Seven",
-    class:"Class Seven",
-    professor:"Professor Seven"
-  },
-  {
-    title: "Book Eight",
-    author: "author Eight",
-    class:"Class Eight",
-    professor:"Professor Eight"
-  },
-  {
-    title: "Book Nine",
-    author: "author Nine",
-    class:"Class Nine",
-    professor:"Professor Nine"
-  },
-  {
-    title: "Book Ten",
-    author: "author Ten",
-    class:"Class Ten",
-    professor:"Professor Ten"
-  },
-  {
-    title: "Book Eleven",
-    author: "author Eleven",
-    class:"Class Eleven",
-    professor:"Professor Eleven"
-  },
 
-];
 
 // ids = project, submit
 
-let projectElem = document.getElementById("project");
+let searchBoxElem = document.getElementById("search_box");
 let submitElem = document.getElementById("submit");
 
-submitElem.addEventListener("click", getUserInputProject);
-
-// This function logs the users input
-function getUserInputProject () {
+submitElem.addEventListener("click", listTheSearch );
+  
 
 
-  // Get the value of the user's input now
-  let userInput = projectElem.value;
-  //console log the value
-  console.log(userInput);
+//Take user input and matching it with title  check if it is a partial match  need to rewrite
+function matchTitle (reserveRecord) { 
+  
+  console.log("it worked");
+  return reserveRecord.title === searchBoxElem.value; //;"Book One"
+  } 
 
-};
-//search the array
 
-/*function searchItems(query) {
-  return TextbookDataList.filter(function(el) {
-      return el.toLowerCase().indexOf(query.toLowerCase()) > -1;
-  })
+
+
+function listTheSearch (){
+  // for now, searchResults is only going to be ONE object (one book) // TODO: make this an array later
+  let searchResults= TextbookDataList.find(matchTitle);
+  console.log(searchResults);
+  
+  //else statement if there is a result
+  // Create a new <li> element, save in memory
+  let listItemElement = document.createElement("li");
+    
+  // TODO: only show results if searchResults exists! (not undefined)
+  
+  // ASSIGNMENT OPERATORS REFERNCE PAGE:
+  //   https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Assignment_Operators
+  
+  
+  // TODO: test out concatenating all the data, one by one:
+  let resultString = JSON.stringify(searchResults);
+ 
+  // resultString += .....;
+  if (searchResults != undefined){
+  
+  listItemElement.textContent = resultString;
+  }else{
+  listItemElement.textContent = "no results";
+  }
+   
+
+  // Get the <ol> tag, save it under a variable name
+  let orderListElement = document.getElementById("list");
+
+  // Finally, append the list item element inside
+  // the ordered list element
+  orderListElement.appendChild(listItemElement);
+  console.log("you are cooking now");
+   
 }
 
-console.log(searchItems(getUserInputProject));
-*/
 
-function isBookOne(name) { 
-    return name.title === 'Book One';
-}
+// Wrap this code in its own function and place this into the listTheSearch (and use python tutor to check)
 
-console.log(TextbookDataList.find(isBookOne));
+ 
 
 
+// When page loads, display all strings from userDataArray
+// as <li> elements inside the <ol> list
+ 
+  
+  
+  
+  
